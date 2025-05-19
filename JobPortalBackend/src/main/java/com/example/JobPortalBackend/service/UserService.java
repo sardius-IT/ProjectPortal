@@ -13,11 +13,18 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public User registerUser(User user) {
-        return userRepository.save(user);
-    }
-
     public Optional<User> getUserByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    // ✅ Add this method for user registration
+    public User registerUser(User user) {
+        // Optional: Check if email already exists
+        Optional<User> existingUser = userRepository.findByEmail(user.getEmail());
+        if (existingUser.isPresent()) {
+            throw new RuntimeException("Email already registered");
+        }
+
+        return userRepository.save(user);
     }
 }
