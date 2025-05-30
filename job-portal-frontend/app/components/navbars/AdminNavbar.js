@@ -21,7 +21,7 @@ export default function AdminNavbar({ onToggleSidebar }) {
   }, []);
 
   return (
-    <header className="bg-gray-950 text-white flex items-center justify-between py-4 px-6 fixed top-0 left-0 w-full z-50 shadow-md">
+    <header className="bg-gray-950 text-white flex items-center justify-between py-4 px-6 fixed top-0 left-0 w-full z-50 shadow-md rounded-2xl">
       {/* Left: Sidebar Toggle + Title */}
       <div className="flex items-center space-x-4 min-w-[150px]">
         <button onClick={onToggleSidebar} className="md:hidden">

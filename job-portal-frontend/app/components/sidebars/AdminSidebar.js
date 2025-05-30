@@ -18,12 +18,11 @@ export default function AdminSidebar({ isOpen, onClose }) {
   const navItems = [
     { label: 'Dashboard', icon: <Home size={20} />, href: '/admin/dashboard' },
     { label: 'User Management', icon: <Search size={20} />, href: '/admin/users' },
-    { label: 'Reports & Complaints', icon: <FileText size={20} />, href: '/admin/reports' },
-    { label: 'Applications Monitoring', icon: <FileText size={20} />, href: '/admin/applications' },
-    { label: 'Analytics Dashboard', icon: <BarChart2 size={20} />, href: '/admin/analytics' },
-    { label: 'Add Featured Employers', icon: <FileText size={20} />, href: '/admin/employers' },
-    { label: 'Send Notification', icon: <MessageSquare size={20} />, href: '/admin/notification' },
-    { label: 'Subscription', icon: <BarChart2 size={20} />, href: '/admin/subscription' },
+    { label: 'job post Management ', icon: <FileText size={20} />, href: '/admin/jobs' },
+    { label: 'Applications', icon: <FileText size={20} />, href: '/admin/applications' },
+    { label: 'feedback', icon: <BarChart2 size={20} />, href: '/admin/feedback' },
+    { label: 'setting', icon: <FileText size={20} />, href: '/admin/setting' },
+
   ];
 
   return (
