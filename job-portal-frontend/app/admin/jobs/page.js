@@ -1,3 +1,10 @@
-export default function ReportsPage() {
-  return <div className="p-6 text-white">Reports & Complaints</div>;
+export default function JobsPage() {
+  return (
+    <div>
+      <h1 className="text-xl font-bold mb-4">Job Post Management</h1>
+      <div className="bg-white p-6 rounded-lg shadow">
+        <p>List of job posts with approve/edit/delete options.</p>
+      </div>
+    </div>
+  );
 }
