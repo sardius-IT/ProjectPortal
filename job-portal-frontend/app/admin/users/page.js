@@ -1,86 +1,72 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { isAdmin } from '@/lib/checkAdminRole'; // ✅ Added
+import { toast } from 'react-hot-toast';
 
 export default function UsersPage() {
-  const [user, setUser] = useState(null);
+  const router = useRouter();
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    fetch('/api/users') // Replace with your actual API route
-      .then(res => res.json())
-      .then(data => setUser(data));
+    if (!isAdmin()) {
+      router.push('/login');
+    } else {
+      setUsers([
+        { id: 1, name: 'John Doe', role: 'Job Seeker', status: 'Active' },
+        { id: 2, name: 'Jane Smith', role: 'Employer', status: 'Pending' },
+      ]);
+    }
   }, []);
 
-  const getStatusColor = (status) => {
-    switch (status) {
-      case 'In progress': return 'bg-blue-500';
-      case 'Rejected': return 'bg-red-400';
-      case 'Hired': return 'bg-green-500';
-      default: return 'bg-gray-400';
-    }
+  const handleApprove = (id) => {
+    toast.success(`User ${id} approved`);
+    // TODO: connect API
   };
 
-  if (!user) return <div className="p-6 text-black">Loading...</div>;
+  const handleBan = (id) => {
+    toast.error(`User ${id} banned`);
+    // TODO: connect API
+  };
 
   return (
-    <div className="p-6 text-black">
-      {/* Header with Profile */}
-      <div className="bg-indigo-900 text-white p-6 rounded-lg flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <img src="/profile.jpg" alt="Profile" className="w-16 h-16 rounded-full" />
-          <div>
-            <h2 className="text-lg font-semibold">{user.name}</h2>
-            <p className="text-sm">{user.title}</p>
-          </div>
-        </div>
-
-        {/* Stats Section */}
-        <div className="flex space-x-4">
-          <div className="bg-blue-500 px-4 py-2 rounded-lg text-center">
-            <p className="text-xl font-bold">{user.referrals.filter(r => r.status === 'In progress').length}</p>
-            <p className="text-sm">In progress</p>
-          </div>
-          <div className="bg-red-400 px-4 py-2 rounded-lg text-center">
-            <p className="text-xl font-bold">{user.referrals.filter(r => r.status === 'Rejected').length}</p>
-            <p className="text-sm">Rejected</p>
-          </div>
-          <div className="bg-green-500 px-4 py-2 rounded-lg text-center">
-            <p className="text-xl font-bold">{user.referrals.filter(r => r.status === 'Hired').length}</p>
-            <p className="text-sm">Hired</p>
-          </div>
-          <div className="text-center ml-4">
-            <p className="text-2xl font-bold">{user.points}</p>
-            <p className="text-sm">Points</p>
-            <div className="w-32 bg-gray-300 rounded-full h-2 mt-2">
-              <div
-                className="bg-green-400 h-2 rounded-full"
-                style={{ width: `${(user.points / 2000) * 100}%` }}
-              />
-            </div>
-            <p className="text-xs mt-1">{2000 - user.points} left until level {user.level + 1}</p>
-          </div>
-        </div>
-      </div>
-
-      {/* Referrals List */}
-      <h3 className="mt-8 text-xl font-bold">Your referrals</h3>
-      <div className="mt-4 space-y-4">
-        {user.referrals.map((ref, index) => (
-          <div key={index} className="flex items-center justify-between bg-gray-50 p-4 rounded-md shadow-sm">
-            <div className="flex items-center space-x-4">
-              <div className="w-10 h-10 flex items-center justify-center rounded-full bg-gray-200 font-bold text-gray-700">
-                {ref.name.split(' ').map(n => n[0]).join('')}
-              </div>
-              <div>
-                <p className="font-semibold">{ref.name}</p>
-                <p className="text-sm text-gray-600">{ref.email}</p>
-              </div>
-            </div>
-            <span className={`px-4 py-1 rounded-full text-white ${getStatusColor(ref.status)}`}>
-              {ref.status}
-            </span>
-          </div>
-        ))}
+    <div className="dark:text-white">
+      <h1 className="text-xl font-bold mb-4">User Management</h1>
+      <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-x-auto">
+        <table className="w-full text-left border-collapse text-sm">
+          <thead className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
+            <tr>
+              <th className="p-4">Name</th>
+              <th className="p-4">Role</th>
+              <th className="p-4">Status</th>
+              <th className="p-4">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {users.map((user) => (
+              <tr key={user.id} className="border-t dark:border-gray-700">
+                <td className="p-4">{user.name}</td>
+                <td className="p-4">{user.role}</td>
+                <td className="p-4">{user.status}</td>
+                <td className="p-4 space-x-2">
+                  <button
+                    onClick={() => handleApprove(user.id)}
+                    className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    onClick={() => handleBan(user.id)}
+                    className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition"
+                  >
+                    Ban
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

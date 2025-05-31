@@ -1,11 +1,11 @@
-// components/navbars/CandidateNavbar.js
+// ✅ Correct
 export default function CandidateNavbar() {
   return (
-    <header className="bg-indigo-700 text-white flex justify-between items-center px-6 py-4">
-      <h1 className="text-xl font-semibold">Candidate Dashboard</h1>
-      <button className="bg-red-600 px-3 py-1 rounded hover:bg-red-700 transition">
-        Logout
-      </button>
-    </header>
+    <nav className="bg-blue-600 text-white p-4">
+      <div className="container mx-auto flex justify-between items-center">
+        <h1 className="text-lg font-bold">Candidate Dashboard</h1>
+        <a href="/auth/logout" className="hover:underline">Logout</a>
+      </div>
+    </nav>
   );
 }
