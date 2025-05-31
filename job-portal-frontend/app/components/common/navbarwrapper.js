@@ -6,13 +6,12 @@ import MainNavbar from '../navbars/MainNavbar';
 export default function NavbarWrapper() {
   const pathname = usePathname();
 
-  // Hide MainNavbar on dashboard routes:
   if (
-    pathname.startsWith('/admin') ||
-    pathname.startsWith('/employer') ||
-    pathname.startsWith('/candidate')
+    ['/admin', '/employer', '/candidate'].some((prefix) =>
+      pathname?.startsWith(prefix)
+    )
   ) {
-    return null; // don't render MainNavbar on dashboards
+    return null;
   }
 
   return <MainNavbar />;
