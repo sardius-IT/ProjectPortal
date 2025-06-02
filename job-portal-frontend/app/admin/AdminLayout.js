@@ -11,10 +11,11 @@ const navItems = [
   { href: "/admin/jobs", label: "Jobs" },
   { href: "/admin/applications", label: "Applications" },
   { href: "/admin/Analytics", label: "Analytics Dashboard" },
+  { href: "/admin/candidates", label: "Candidates" }, 
   { href: "/admin/feedback", label: "Feedback" },
   { href: "/admin/setting", label: "Settings" },
-  
 ];
+
 
 export default function AdminLayout({ children }) {
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
@@ -92,7 +93,7 @@ export default function AdminLayout({ children }) {
         )}
 
         {/* Navigation */}
-        <nav className="flex flex-col space-y-4">
+        <nav className="flex flex-col space-y-">
           {navItems.map((item) => (
             <Link
               key={item.href}
@@ -125,10 +126,11 @@ export default function AdminLayout({ children }) {
           {/* Admin with profile link */}
           <div className="flex items-center space-x-3">
             <Link
-              href="/admin/candidates/[id].js"
+              href="/admin/candidates"
               className="flex items-center space-x-2  text-gray-700"
             >
               <span className="text-lg">• Admin</span>
+              
             </Link>
           </div>
         </header>
