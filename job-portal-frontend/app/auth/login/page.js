@@ -7,23 +7,27 @@ export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [role, setRole] = useState("admin"); // Default role
+  const [role, setRole] = useState("admin");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setMessage("");
 
     try {
       const response = await fetch("http://localhost:8080/api/users/login", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email, password, role }),
       });
 
       if (response.ok) {
         const data = await response.json();
+        localStorage.setItem('token', data.token); // example token
+        localStorage.setItem('role', role);
+
         setMessage(`Welcome, ${data.fullName}! Redirecting...`);
 
         switch (role) {
@@ -47,13 +51,14 @@ export default function LoginPage() {
     } catch (error) {
       console.error("Login error:", error);
       setMessage("Server error.");
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
     <main className="min-h-screen flex items-center justify-center bg-green-100 p-5">
       <div className="flex w-full max-w-4xl bg-white shadow-lg rounded-2xl overflow-hidden">
-        {/* Form Section */}
         <div className="w-full md:w-1/2 p-10">
           <h2 className="text-3xl font-bold mb-6">Login</h2>
           <form onSubmit={handleLogin} className="space-y-4">
@@ -85,15 +90,14 @@ export default function LoginPage() {
             </select>
             <button
               type="submit"
-              className="w-full bg-blue-500 text-white py-3 rounded-md hover:bg-blue-300 transition"
+              disabled={loading}
+              className="w-full bg-blue-500 text-white py-3 rounded-md hover:bg-blue-300 transition disabled:opacity-50"
             >
-              Login
+              {loading ? "Logging in..." : "Login"}
             </button>
           </form>
 
-          {message && (
-            <p className="mt-4 text-center text-red-500">{message}</p>
-          )}
+          {message && <p className="mt-4 text-center text-red-500">{message}</p>}
 
           <p className="mt-6 text-sm text-center text-gray-600">
             Forgot password?{" "}
@@ -103,13 +107,11 @@ export default function LoginPage() {
           </p>
         </div>
 
-        {/* Image Section */}
-
         <div
           className="hidden md:flex relative w-1/2 bg-cover bg-center"
           style={{ backgroundImage: "url('/registion.jpg')" }}
         >
-          <div className="absolute inset-0  bg-opacity-10">.</div>
+          <div className="absolute inset-0 bg-opacity-10">.</div>
           <div className="absolute bottom-20 left-28 bg-white bg-opacity-60 backdrop-blur-lg p-6 rounded-xl max-w-xs">
             <div className="w-6 h-6 border-2 border-gray-900 rounded-full animate-spin mb-2 text-white">
               .
@@ -122,7 +124,7 @@ export default function LoginPage() {
               with the latest openings tailored just for you.
             </p>
           </div>
-         </div>
+        </div>
       </div>
     </main>
   );

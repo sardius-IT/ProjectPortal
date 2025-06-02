@@ -1,7 +1,8 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",        // ✅ REQUIRED to make "paths" work correctly
     "paths": {
-      "@/*": ["./*"]
+      "@/*": ["app/*"]     // ✅ Assumes your files are inside the `app/` folder
     }
   }
 }
