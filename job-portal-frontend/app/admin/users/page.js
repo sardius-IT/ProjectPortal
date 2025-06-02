@@ -1,42 +1,52 @@
-'use client';
+'use client'
 
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { isAdmin } from '@/lib/checkAdminRole'; // ✅ Added
-import { toast } from 'react-hot-toast';
+import { useEffect, useState } from 'react'
 
 export default function UsersPage() {
-  const router = useRouter();
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    if (!isAdmin()) {
-      router.push('/login');
-    } else {
-      setUsers([
-        { id: 1, name: 'John Doe', role: 'Job Seeker', status: 'Active' },
-        { id: 2, name: 'Jane Smith', role: 'Employer', status: 'Pending' },
-      ]);
-    }
-  }, []);
+    fetch('http://localhost:8080/admin/users')
+      .then((res) => res.json())
+      .then((data) => {
+        setUsers(data)
+        setLoading(false)
+      })
+      .catch((err) => {
+        console.error('Failed to load users:', err)
+        setLoading(false)
+      })
+  }, [])
 
   const handleApprove = (id) => {
-    toast.success(`User ${id} approved`);
-    // TODO: connect API
-  };
+    // Optionally: call backend to update status
+    setUsers((prev) =>
+      prev.map((user) =>
+        user.id === id ? { ...user, status: 'Active' } : user
+      )
+    )
+  }
 
   const handleBan = (id) => {
-    toast.error(`User ${id} banned`);
-    // TODO: connect API
-  };
+    // Optionally: call backend to update status
+    setUsers((prev) =>
+      prev.map((user) =>
+        user.id === id ? { ...user, status: 'Banned' } : user
+      )
+    )
+  }
+
+  if (loading) return <div className="p-6">Loading users...</div>
 
   return (
-    <div className="dark:text-white">
-      <h1 className="text-xl font-bold mb-4">User Management</h1>
-      <div className="bg-white dark:bg-gray-800 rounded-lg shadow overflow-x-auto">
-        <table className="w-full text-left border-collapse text-sm">
-          <thead className="bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200">
+    <div className="p-6">
+      <h1 className="text-2xl font-bold mb-4">User Management</h1>
+      <div className="bg-white rounded-lg shadow overflow-x-auto">
+        <table className="w-full text-left border-collapse">
+          <thead className="bg-gray-200">
             <tr>
+              <th className="p-4">Profile</th>
               <th className="p-4">Name</th>
               <th className="p-4">Role</th>
               <th className="p-4">Status</th>
@@ -45,20 +55,41 @@ export default function UsersPage() {
           </thead>
           <tbody>
             {users.map((user) => (
-              <tr key={user.id} className="border-t dark:border-gray-700">
+              <tr key={user.id} className="border-t">
+                <td className="p-4">
+                  <img
+                    src={user.profileImage}
+                    alt={user.name}
+                    className="w-10 h-10 rounded-full"
+                  />
+                </td>
                 <td className="p-4">{user.name}</td>
                 <td className="p-4">{user.role}</td>
-                <td className="p-4">{user.status}</td>
+                <td className="p-4">
+                  <span
+                    className={`px-2 py-1 rounded text-sm ${
+                      user.status === 'Active'
+                        ? 'bg-green-100 text-green-700'
+                        : user.status === 'Banned'
+                        ? 'bg-red-100 text-red-700'
+                        : 'bg-yellow-100 text-yellow-700'
+                    }`}
+                  >
+                    {user.status}
+                  </span>
+                </td>
                 <td className="p-4 space-x-2">
                   <button
+                    className="bg-green-500 text-white px-3 py-1 rounded disabled:opacity-50"
                     onClick={() => handleApprove(user.id)}
-                    className="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 transition"
+                    disabled={user.status === 'Active'}
                   >
                     Approve
                   </button>
                   <button
+                    className="bg-red-500 text-white px-3 py-1 rounded disabled:opacity-50"
                     onClick={() => handleBan(user.id)}
-                    className="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 transition"
+                    disabled={user.status === 'Banned'}
                   >
                     Ban
                   </button>
@@ -69,5 +100,5 @@ export default function UsersPage() {
         </table>
       </div>
     </div>
-  );
+  )
 }
