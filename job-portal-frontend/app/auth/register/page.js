@@ -7,7 +7,7 @@ export default function Register() {
     fullName: "",
     email: "",
     password: "",
-    role: "",
+    role: "", 
   });
 
   const handleChange = (e) => {
@@ -33,7 +33,7 @@ export default function Register() {
         {/* Left Column - Registration Form */}
         <div className="w-full md:w-1/2 p-10">
           <h1 className="text-3xl font-bold mb-6">Register</h1>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4">                                                    
             <input
               name="fullName"
               placeholder="Full Name"
@@ -73,10 +73,10 @@ export default function Register() {
         </div>
 
         {/* Right Column - Image with Overlay */}
-        <div
+        <div  
           className="hidden md:flex relative w-1/2 bg-cover bg-center"
           style={{
-            backgroundImage: "url('/registion.jpg')",
+             backgroundImage: "url('/registion.jpg')",
           }}
         >
           <div className="absolute inset-0 bg-opacity-10"></div>
@@ -96,4 +96,3 @@ export default function Register() {
     </main>
   );
 }
-

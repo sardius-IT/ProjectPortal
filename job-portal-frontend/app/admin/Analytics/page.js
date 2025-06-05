@@ -1,64 +1,65 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell, Legend
 } from 'recharts';
 
+import SockJS from 'sockjs-client';
+import { Client } from '@stomp/stompjs';
+
 export default function AnalyticsDashboard() {
-  const [stats, setStats] = useState({
-    totalUsers: 1200,
-    jobsPosted: 340,
-    applicationsReceived: 875,
-  });
-
-  const dailyApplications = [
-    { day: 'Mon', applications: 120 },
-    { day: 'Tue', applications: 150 },
-    { day: 'Wed', applications: 110 },
-    { day: 'Thu', applications: 180 },
-    { day: 'Fri', applications: 140 },
-    { day: 'Sat', applications: 90 },
-    { day: 'Sun', applications: 85 },
-  ];
-
-  const userTypes = [
-    { name: 'Employers', value: 300 },
-    { name: 'Job Seekers', value: 900 },
-  ];
-
-  const jobCategories = [
-    { name: 'Engineering', count: 120 },
-    { name: 'Design', count: 90 },
-    { name: 'Marketing', count: 70 },
-  ];
-
-  const mostAppliedJobs = [
-    { title: 'Frontend Developer', count: 150 },
-    { title: 'UI/UX Designer', count: 100 },
-    { title: 'Backend Developer', count: 95 },
-  ];
+  const [analytics, setAnalytics] = useState(null);
+  const [error, setError] = useState(null);
+  const stompClient = useRef(null);
 
   const COLORS = ['#8884d8', '#82ca9d'];
 
+  useEffect(() => {
+    const socket = new SockJS('http://localhost:8080/ws');
+    stompClient.current = new Client({
+      webSocketFactory: () => socket,
+      reconnectDelay: 5000,
+      onConnect: () => {
+        stompClient.current.subscribe('/topic/analytics', (message) => {
+          const data = JSON.parse(message.body);
+          setAnalytics(data);
+          setError(null);
+        });
+        stompClient.current.publish({ destination: '/app/requestAnalytics' });
+      },
+      onStompError: (frame) => setError(`Broker error: ${frame.headers['message']}`),
+      onWebSocketError: () => setError('WebSocket error'),
+    });
+
+    stompClient.current.activate();
+
+    return () => {
+      stompClient.current.deactivate();
+    };
+  }, []);
+
+  if (error) return <div className="p-6 text-red-600">Error: {error}</div>;
+  if (!analytics) return <div className="p-6">Connecting to live analytics...</div>;
+
   return (
     <div className="p-6 space-y-6">
-      <h1 className="text-2xl font-bold">Analytics Dashboard</h1>
+      <h1 className="text-2xl font-bold">Live Analytics Dashboard</h1>
 
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         <div className="bg-white p-4 rounded shadow">
           <h2 className="text-lg font-semibold">Total Users</h2>
-          <p className="text-2xl font-bold">{stats.totalUsers}</p>
+          <p className="text-2xl font-bold">{analytics.totalUsers}</p>
         </div>
         <div className="bg-white p-4 rounded shadow">
           <h2 className="text-lg font-semibold">Jobs Posted</h2>
-          <p className="text-2xl font-bold">{stats.jobsPosted}</p>
+          <p className="text-2xl font-bold">{analytics.jobsPosted}</p>
         </div>
         <div className="bg-white p-4 rounded shadow">
           <h2 className="text-lg font-semibold">Applications</h2>
-          <p className="text-2xl font-bold">{stats.applicationsReceived}</p>
+          <p className="text-2xl font-bold">{analytics.applicationsReceived}</p>
         </div>
       </div>
 
@@ -66,7 +67,7 @@ export default function AnalyticsDashboard() {
       <div className="bg-white p-4 rounded shadow">
         <h2 className="text-lg font-semibold mb-2">Applications This Week</h2>
         <ResponsiveContainer width="100%" height={250}>
-          <BarChart data={dailyApplications}>
+          <BarChart data={analytics.dailyApplications}>
             <XAxis dataKey="day" />
             <YAxis />
             <Tooltip />
@@ -81,7 +82,7 @@ export default function AnalyticsDashboard() {
         <ResponsiveContainer width="100%" height={250}>
           <PieChart>
             <Pie
-              data={userTypes}
+              data={analytics.userTypes}
               dataKey="value"
               nameKey="name"
               cx="50%"
@@ -89,7 +90,7 @@ export default function AnalyticsDashboard() {
               outerRadius={80}
               label
             >
-              {userTypes.map((entry, index) => (
+              {analytics.userTypes.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
               ))}
             </Pie>
@@ -102,7 +103,7 @@ export default function AnalyticsDashboard() {
       <div className="bg-white p-4 rounded shadow">
         <h2 className="text-lg font-semibold mb-2">Top Job Categories</h2>
         <ul className="space-y-1">
-          {jobCategories.map((cat, index) => (
+          {analytics.jobCategories.map((cat, index) => (
             <li key={index} className="flex justify-between">
               <span>{cat.name}</span>
               <span>{cat.count}</span>
@@ -115,7 +116,7 @@ export default function AnalyticsDashboard() {
       <div className="bg-white p-4 rounded shadow">
         <h2 className="text-lg font-semibold mb-2">Most Applied Jobs</h2>
         <ul className="space-y-1">
-          {mostAppliedJobs.map((job, index) => (
+          {analytics.mostAppliedJobs.map((job, index) => (
             <li key={index} className="flex justify-between">
               <span>{job.title}</span>
               <span>{job.count}</span>
@@ -126,3 +127,4 @@ export default function AnalyticsDashboard() {
     </div>
   );
 }
+
