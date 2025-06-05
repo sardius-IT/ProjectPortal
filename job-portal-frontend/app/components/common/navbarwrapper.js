@@ -7,7 +7,7 @@ export default function NavbarWrapper() {
   const pathname = usePathname();
 
   if (
-    ['/admin', '/employer', '/candidate'].some((prefix) =>
+    ['/admin', '/employer', '/seeker'].some((prefix) =>
       pathname?.startsWith(prefix)
     )
   ) {

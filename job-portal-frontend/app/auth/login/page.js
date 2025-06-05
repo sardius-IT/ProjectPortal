@@ -37,8 +37,8 @@ export default function LoginPage() {
           case "employee":
             router.push("/employer/dashboard");
             break;
-          case "candidate":
-            router.push("/candidate/dashboard");
+          case "seeker":
+            router.push("/seeker/dashboard");
             break;
           default:
             setMessage("Unknown role. Cannot redirect.");
@@ -85,8 +85,8 @@ export default function LoginPage() {
               required
             >
               <option value="admin">Admin</option>
-              <option value="employee">Employee</option>
-              <option value="candidate">Candidate</option>
+              <option value="employee">Employer</option>
+              <option value="seeker">seeker</option>
             </select>
             <button
               type="submit"

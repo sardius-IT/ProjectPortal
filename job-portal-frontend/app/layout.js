@@ -1,22 +1,20 @@
 // app/layout.js
-import './globals.css';
-import NavbarWrapper from './components/common/navbarwrapper';
+import './globals.css'
+import SessionWrapper from './components/common/sessionwarapper'
 
 export const metadata = {
-  title: 'Sardius Job Portal',
-  description: 'Job portal for employers and candidates',
-};
+  title: 'Job Portal',
+  description: 'Find and apply for jobs easily',
+}
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className="flex flex-col min-h-screen">
-        <NavbarWrapper />
-        <main className="flex-grow container mx-auto ">
+      <body>
+        <SessionWrapper>
           {children}
-        </main>
+        </SessionWrapper>
       </body>
     </html>
-  );
+  )
 }
-
