@@ -1,7 +1,6 @@
-
 // app/seeker/layout.js
-import '../globals.css'; // Reuse global styles (Tailwind, resets, etc.)
-import SeekerLayout from '@/components/seeker/Layout'; // Adjust path if needed
+import '../globals.css'
+import SeekerLayout from './seekerlayout' // ✅ Remove the extra './.' and match casing
 
 export default function SeekerRootLayout({ children }) {
   return (
@@ -10,5 +9,5 @@ export default function SeekerRootLayout({ children }) {
         <SeekerLayout>{children}</SeekerLayout>
       </body>
     </html>
-  );
+  )
 }
