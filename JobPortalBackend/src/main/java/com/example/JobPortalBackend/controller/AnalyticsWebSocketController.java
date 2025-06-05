@@ -1,7 +1,6 @@
 package com.example.JobPortalBackend.controller;
 
 import com.example.JobPortalBackend.service.AnalyticsService;
-import com.example.JobPortalBackend.websocket.AnalyticsPublisher;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;

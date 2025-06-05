@@ -1,6 +1,7 @@
 // app/layout.js
 import './globals.css'
 import SessionWrapper from './components/common/sessionwarapper'
+import NavbarWrapper from './components/common/navbarwrapper'
 
 export const metadata = {
   title: 'Job Portal',
@@ -12,7 +13,9 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <SessionWrapper>
-          {children}
+          <NavbarWrapper>
+            {children}
+          </NavbarWrapper>
         </SessionWrapper>
       </body>
     </html>

@@ -15,7 +15,10 @@ export default function HomePage() {
         setFeaturedJobs(data)
         setLoading(false)
       })
-      .catch(() => setLoading(false))
+      .catch((err) => {
+        console.error('Failed to fetch featured jobs:', err)
+        setLoading(false)
+      })
   }, [])
 
   return (
@@ -88,7 +91,10 @@ export default function HomePage() {
             <Link href="/auth/register" className="bg-white text-blue-600 px-6 py-3 rounded font-semibold">
               Join Now
             </Link>
-            <Link href="/auth/login" className="border border-white px-6 py-3 rounded font-semibold hover:bg-white hover:text-blue-600">
+            <Link
+              href="/auth/login"
+              className="border border-white px-6 py-3 rounded font-semibold hover:bg-white hover:text-blue-600"
+            >
               Sign In
             </Link>
           </div>
@@ -97,4 +103,3 @@ export default function HomePage() {
     </>
   )
 }
-
